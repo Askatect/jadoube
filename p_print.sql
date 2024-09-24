@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE [jra].[usp_print] (@string nvarchar(max))
+CREATE OR ALTER PROCEDURE [jra].[p_print] (@string nvarchar(max))
 /*
 Version: 1.0
 Author: JRA
@@ -14,7 +14,7 @@ Returns:
 Prints the given string.
 
 Usage:
-EXECUTE [jra].[usp_print](<long string>)
+EXECUTE [jra].[p_print](<long string>)
 >>> <long string>
 */
 AS

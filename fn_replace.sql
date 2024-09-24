@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[ufn_replace](
+CREATE OR ALTER FUNCTION [jra].[fn_replace](
     @old_substring nvarchar(max), 
     @new_substring nvarchar(max), 
     @strict bit = 1,
@@ -6,6 +6,8 @@ CREATE OR ALTER FUNCTION [jra].[ufn_replace](
 )
 RETURNS nvarchar(max)
 /*
+[jra].[fn_replace]
+
 Version: 2.0
 Author: JRA
 Date: 2024-02-09
@@ -23,13 +25,13 @@ Returns:
 - (nvarchar(max)): The input with string with all appropriate replacements.
 
 Usage:
->>> [jra].[ufn_replace]('Old', 'New', 0, 'Replace Old Text')
+>>> [jra].[fn_replace]('Old', 'New', 0, 'Replace Old Text')
 'Replace New Text'
->>> [jra].[ufn_replace]('New', 'Newer', 1, 'Replace New Text')
+>>> [jra].[fn_replace]('New', 'Newer', 1, 'Replace New Text')
 'Replace New Text'
->>> [jra].[ufn_replace]('  ', ' ', 0, 'Three   spaces.')
+>>> [jra].[fn_replace]('  ', ' ', 0, 'Three   spaces.')
 'Three spaces.'
->>> [jra].[ufn_replace]('[^0-9]', '', 0, 'Source_20240101.csv')
+>>> [jra].[fn_replace]('[^0-9]', '', 0, 'Source_20240101.csv')
 '20240101'
 
 History:

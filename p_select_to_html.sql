@@ -1,17 +1,17 @@
-CREATE OR ALTER PROCEDURE [jra].[ufn_select_to_html] (
+CREATE OR ALTER PROCEDURE [jra].[p_select_to_html] (
     @schema varchar(128) = NULL,
     @table varchar(128),
     @print bit = 1
 )
 /*
-[jra].[ufn_select_to_html]
+[jra].[p_select_to_html]
 
 Version: 1.0
 Authors: JRA
 Date: 2024-06-04
 
 Explanation:
-Converts a SQL table to basic html and displays the html
+Converts a SQL table to basic html and displays the html.
 
 Parameters:
 - @schema (varchar(128)): The schema of the table to convert. Defaults to the default schema (usually [dbo]).
@@ -23,7 +23,7 @@ Returns:
 
 Usage:
 >>> SELECT 'value' AS [column] INTO #table
->>> EXECUTE [jra].[ufn_select_to_html] @table = '#table', @print = 0
+>>> EXECUTE [jra].[p_select_to_html] @table = '#table', @print = 0
 """
 +=========================================================================================================+
 |                                                 html                                                    |
@@ -118,7 +118,3 @@ PRINT(@html)
 SELECT @html AS [html]
 
 GO
-
-DROP TABLE IF EXISTS [#table]
-SELECT 'value' AS [column] INTO [#table]
-EXECUTE [utl].[ufn_select_to_html] @table = '#table'

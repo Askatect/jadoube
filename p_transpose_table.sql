@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE [jra].[usp_transpose_table] (@query varchar(max),
+CREATE OR ALTER PROCEDURE [jra].[p_transpose_table] (@query varchar(max),
 	@output varchar(max) = '[jra].[output]'
 )
 /*
@@ -14,7 +14,7 @@ Parameters:
 - @output (varchar(max)): Name of output table.
 
 Usage:
-EXECUTE [jra].[usp_transpose_table] @query = 'SELECT * FROM (VALUES (''Sapphira'', ''Blue''), (''Thorn'', ''Red''), (''Glaedr'', ''Gold''), (''Firnen'', ''Green''), (''Shruikan'', ''Black'')) AS [T]([Dragon] nvarchar(max), [Colour] nvarchar(max))', @output = '##Transposed'
+EXECUTE [jra].[p_transpose_table] @query = 'SELECT * FROM (VALUES (''Sapphira'', ''Blue''), (''Thorn'', ''Red''), (''Glaedr'', ''Gold''), (''Firnen'', ''Green''), (''Shruikan'', ''Black'')) AS [T]([Dragon] nvarchar(max), [Colour] nvarchar(max))', @output = '##Transposed'
 SELECT * FROM ##Transposed
 >>> #========#==========#=======#========#========#==========#
 	| Dragon | Sapphira | Thorn | Glaedr | Firnen | Shruikan |

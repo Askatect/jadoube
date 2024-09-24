@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[ufn_hexcode_to_rgb] (@hexcode char(7))
+CREATE OR ALTER FUNCTION [jra].[tf_hexcode_to_rgb] (@hexcode char(7))
 RETURNS @Output TABLE ([rgb] char(1), [value] int)
 /*
 Version: 1.0
@@ -15,7 +15,7 @@ Returns:
 - @Output (table([rgb] char(1), [value] int)): RGB values in tabulated format.
 
 Usage:
-[jra].[hexcode_to_rgb]('#181848')
+[jra].[tf_hexcode_to_rgb]('#181848')
 >>> #=====#=======#
 	| rgb | value |
 	#=====#=======#

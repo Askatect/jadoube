@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE [jra].[usp_select_to_html_colour] (
+CREATE OR ALTER PROCEDURE [jra].[p_select_to_html_colour] (
     @query varchar(max),
     @order_by varchar(max) = NULL,
 	@out varchar(max) = '' OUTPUT,
@@ -23,14 +23,14 @@ Parameters:
 - @display (bit): If true, displays outputs. Defaults to false.
 
 Prerequisites:
-- [jra].[ufn_gradient_hex]: Calculates gradients for numerical columns.
+- [jra].[fn_gradient_hex]: Calculates gradients for numerical columns.
 
 Returns:
 - @out (nvarchar(max) OUTPUT): Output HTML.
 
 Usage:
 DECLARE @output nvarchar(max) = ''
-EXECUTE [jra].[usp_select_to_html] @query = 'SELECT * FROM [table]', @order_by = '[column1] ASC, [column2] DESC', @out = @output OUTPUT
+EXECUTE [jra].[p_select_to_html] @query = 'SELECT * FROM [table]', @order_by = '[column1] ASC, [column2] DESC', @out = @output OUTPUT
 */
 AS
 IF @print = 0
@@ -185,15 +185,15 @@ BEGIN
                 IF @numeric <> 0 AND @min < 0
                 BEGIN
                     IF @value_float < 0
-                        SET @background = [jra].[ufn_gradient_hex](@value_float, @min, 0, @negative, @null)
+                        SET @background = [jra].[fn_gradient_hex](@value_float, @min, 0, @negative, @null)
                     ELSE
-                        SET @background = [jra].[ufn_gradient_hex](@value_float, @max, 0, @positive, @null)
+                        SET @background = [jra].[fn_gradient_hex](@value_float, @max, 0, @positive, @null)
                     SET @fontcolour = @white
                 END
                 ELSE
                 BEGIN
                     IF @numeric <> 0
-                        SET @background = [jra].[ufn_gradient_hex](@value_float, @min, @max, @white, @light_accent)
+                        SET @background = [jra].[fn_gradient_hex](@value_float, @min, @max, @white, @light_accent)
                     ELSE IF @R % 2 = 0
                         SET @background = @white
                     ELSE

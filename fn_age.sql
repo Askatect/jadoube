@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[ufn_age](
+CREATE OR ALTER FUNCTION [jra].[fn_age](
 	@Start date, 
 	@End date = NULL
 )
@@ -19,7 +19,7 @@ Returns:
 - (int)
 
 Usage:
-[jra].[ufn_age]('1999-10-03 05:45', '2024-01-06')
+[jra].[fn_age]('1999-10-03 05:45', '2024-01-06')
 >>> 24
 */
 BEGIN

@@ -1,11 +1,11 @@
-CREATE OR ALTER FUNCTION [jra].[ufn_string_split_item] (
+CREATE OR ALTER FUNCTION [jra].[fn_string_split_item] (
     @string nvarchar(max),
     @separator char(1) = ',',
     @item int = 0
 )
 RETURNS nvarchar(4000)
 /*
-[jra].[ufn_string_split_item]
+[jra].[fn_string_split_item]
 
 Version: 2.0
 Authors: JRA
@@ -23,11 +23,11 @@ Returns:
 - (nvarchar(4000))
 
 Usage:
->>> PRINT([jra].[ufn_string_split_item]('Link,Zelda,Ganondorf', DEFAULT, 1))
+>>> PRINT([jra].[fn_string_split_item]('Link,Zelda,Ganondorf', DEFAULT, 1))
 'Zelda'
 
 History:
-- 2.0 JRA (2024-08-13): Rewritten to remove dependency on [jra].[ufn_string_split]. @separator is now char(1).
+- 2.0 JRA (2024-08-13): Rewritten to remove dependency on [jra].[fn_string_split]. @separator is now char(1).
 - 1.0 JRA (2024-07-02): Initial version.
 */
 AS

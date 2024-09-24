@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE [jra].[usp_timer](
+CREATE OR ALTER PROCEDURE [jra].[p_timer](
 	@process varchar(512) = NULL,
 	@start datetime = NULL,
 	@record bit = 1,
@@ -33,24 +33,24 @@ Usage:
 DECLARE @start datetime
 SET @start = GETDATE()
 <script>
-EXECUTE [jra].[usp_timer] @process = 'Original', @start = @start, @record = 0, @print = 1
+EXECUTE [jra].[p_timer] @process = 'Original', @start = @start, @record = 0, @print = 1
 ---
 <script>
-EXECUTE [jra].[usp_timer]
+EXECUTE [jra].[p_timer]
 <further script>
-EXECUTE [jra].[usp_timer]
+EXECUTE [jra].[p_timer]
 GO
 <additional further script>
-EXECUTE [jra].[usp_timer] @diplay = 1
+EXECUTE [jra].[p_timer] @diplay = 1
 ---
 DECLARE @counter AS int = 0
 WHILE @counter < <iterations>
 BEGIN
 	<script>
-	EXECUTE [jra].[usp_timer] @process = 'TimeIt', @print = 0
+	EXECUTE [jra].[p_timer] @process = 'TimeIt', @print = 0
 	SET @counter += 1
 END
-EXECUTE [jra].[usp_timer] @record = 0, @print = 0, @display = 1
+EXECUTE [jra].[p_timer] @record = 0, @print = 0, @display = 1
 
 History:
 - 2.1 JRA (2024-01-25): Removed the batch text facility. Can't seem to get it working when called as a procedure.

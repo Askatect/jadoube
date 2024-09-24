@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[ufn_json_formatter](@json nvarchar(max))
+CREATE OR ALTER FUNCTION [jra].[fn_json_formatter](@json nvarchar(max))
 RETURNS nvarchar(max)
 /*
 Version: 1.0
@@ -15,7 +15,7 @@ Returns:
  - @json (nvarchar(max)): Formatted JSON.
 
 Usage:
-[jra].[ufn_json_formatter]('{"game": ["Super", "Mario", "Odyssey"], "moons": 880, "bosses": {"Cascade": "Madame Broode", "Metro": "Mechawiggler", "Ruined": "Lord of Lightning"}}')
+[jra].[fn_json_formatter]('{"game": ["Super", "Mario", "Odyssey"], "moons": 880, "bosses": {"Cascade": "Madame Broode", "Metro": "Mechawiggler", "Ruined": "Lord of Lightning"}}')
 >>> {
 		"game": [
 			"Super",

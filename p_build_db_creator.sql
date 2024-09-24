@@ -1,5 +1,4 @@
-CREATE OR ALTER PROCEDURE [jra].[usp_build_db_creator] (
--- DECLARE
+CREATE OR ALTER PROCEDURE [jra].[p_build_db_creator] (
 	@replace bit = 0,
 	@data bit = 0,
 	@schemata varchar(max) = NULL,
@@ -29,8 +28,8 @@ Explanation:
 Reads schemata of the current database and writes the DDL commands to recreate objects into a stored procedure.
 
 Requirements:
-- [jra].[ufn_string_split]: Splits a delimited string into an array.
-- [jra].[usp_print]: Prints large strings.
+- [jra].[tf_string_split]: Splits a delimited string into an array.
+- [jra].[p_print]: Prints large strings.
 
 Parameters:
 - @replace (bit): If true, the resulting procedure will overwrite existing objects when called. Defaults to false.
@@ -58,8 +57,8 @@ Writes a stored procedure with the requested DDL statements for the requested sc
 
 Usage:
 USE [database]
-EXECUTE [jra].[usp_build_db_creator] @replace = 1, @schemata = 'jra,dbo'
->>> [jra].[usp_drop_and_create_[database]]_[dbo]]_[jra]]]
+EXECUTE [jra].[p_build_db_creator] @replace = 1, @schemata = 'jra,dbo'
+>>> [jra].[p_drop_and_create_[database]]_[dbo]]_[jra]]]
 
 History:
 - 1.4 (2024-01-15): Adjusted docstring generation. Removed @action loop.
@@ -136,7 +135,7 @@ SELECT 'SC' AS [type],
 	[s].[schema_id] AS [schema_id],
 	CONCAT('IF SCHEMA_ID(''', [s].[name], ''') IS NULL', CHAR(10), CHAR(9), 'EXEC(''CREATE SCHEMA [', [s].[name], ']'')') AS [definition]
 FROM sys.schemas AS [s]
-WHERE [s].[name] IN (SELECT DISTINCT [value] FROM [jra].[ufn_string_split](@schemata + ',jra', ','))
+WHERE [s].[name] IN (SELECT DISTINCT [value] FROM [jra].[tf_string_split](@schemata + ',jra', ','))
 
 --============================================================--
 /* Tables */
@@ -388,9 +387,9 @@ BEGIN
 		AND [o].[is_ms_shipped] = 0
 		AND [o].[schema_id] IN (SELECT [object_id] FROM @definitions WHERE [type] = 'SC')
 		AND NOT ([o].[schema_id] = SCHEMA_ID('jra')
-			AND ([o].[name] = 'usp_build_db_creator'
-				OR [o].[name] LIKE 'usp_create_[[]%]'
-				OR [o].[name] LIKE 'usp_drop_and_create_[[]%]'))
+			AND ([o].[name] = 'p_build_db_creator'
+				OR [o].[name] LIKE 'p_create_[[]%]'
+				OR [o].[name] LIKE 'p_drop_and_create_[[]%]'))
 END
 
 --============================================================--
@@ -433,14 +432,14 @@ END
 /* Definitions Cursor */
 
 SET @sql = 'CREATE OR ALTER PROCEDURE '
-SET @description = CONCAT('[jra].[usp_', IIF(@replace = 1, 'drop_and_', ''), 'create_[', DB_NAME(), ']]_[', REPLACE(REPLACE(@schemata, ',', ']]_['), ' ', ''), ']]]')
+SET @description = CONCAT('[jra].[p_', IIF(@replace = 1, 'drop_and_', ''), 'create_[', DB_NAME(), ']]_[', REPLACE(REPLACE(@schemata, ',', ']]_['), ' ', ''), ']]]')
 IF LEN(@description) >= 128
 	SET @description = SUBSTRING(@description, 1, CHARINDEX(']]', @description)) + ']]'
 SET @sql = CONCAT(@sql, @description, ' AS')
 
 SET @sql += CONCAT(
 	CHAR(10), '/*',
-	CHAR(10), 'Author: [jra].[usp_build_db_creator]',
+	CHAR(10), 'Author: [jra].[p_build_db_creator]',
 	CHAR(10), 'Date: ', FORMAT(GETUTCDATE(), 'yyyy-MM-dd HH:mm:ss'), CHAR(10),
 	CHAR(10), 'Description:',
 	CHAR(10), IIF(@replace = 1, 'Drops and c', 'C'), 'reates the objects from the schemata ', REPLACE(@schema, ',', ', '), ', from database ', DB_NAME(), '.',
@@ -544,7 +543,7 @@ DEALLOCATE definitions_cursor
 SET @sql += CONCAT(CHAR(10), 'END')
 
 IF @print = 1
-	EXECUTE [jra].[usp_print] @sql
+	EXECUTE [jra].[p_print] @sql
 IF @display = 1
 BEGIN
 	SELECT [types].[type],

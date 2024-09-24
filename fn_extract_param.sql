@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[ufn_extract_param] (
+CREATE OR ALTER FUNCTION [jra].[fn_extract_param] (
     @string varchar(max),
     @separator varchar(1) = ';',
     @key varchar(max),
@@ -6,7 +6,7 @@ CREATE OR ALTER FUNCTION [jra].[ufn_extract_param] (
 )
 RETURNS varchar(max)
 /*
-[jra].[ufn_extract_param]
+[jra].[fn_extract_param]
 
 Version: 1.0
 Authors: JRA
@@ -25,7 +25,7 @@ Returns:
 - (varchar(max))
 
 Usage:
->>> [jra].[ufn_extract_param]('server=<server>;database=<database>', DEFAULT, @key = 'database_', DEFAULT)
+>>> [jra].[fn_extract_param]('server=<server>;database=<database>', DEFAULT, @key = 'database_', DEFAULT)
 '<database>'
 
 History:

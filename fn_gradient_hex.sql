@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[ufn_gradient_hex] (
+CREATE OR ALTER FUNCTION [jra].[fn_gradient_hex] (
 	@target float, 
 	@lower float, 
 	@upper float,
@@ -22,7 +22,7 @@ Parameters:
 - @hexmax (char(7)) The hexcode of the highest colour on the gradient.
 
 Prerequisites:
-- [jra].[ufn_hexcode_to_rgb]: Converts input to RGB values for calculations.
+- [jra].[fn_hexcode_to_rgb]: Converts input to RGB values for calculations.
 
 Returns:
 - @hexcode (char(7)): The target colour.
