@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE [jra].[p_timer](
+CREATE OR ALTER PROCEDURE [jadoube].[p_timer](
 	@process varchar(512) = NULL,
 	@start datetime = NULL,
 	@record bit = 1,
@@ -13,7 +13,7 @@ Date: 2024-01-25
 
 Explanation:
 Measures duration of instances and batches, with the options to print the duration during execution and to display summary data (recommended at the end of a script only). The following terms are used:
-- "Instance": Instances are unique executions of some SQL, separated by calls to [jra].[timer] or start and end of a batch.
+- "Instance": Instances are unique executions of some SQL, separated by calls to [jadoube].[timer] or start and end of a batch.
 - "Process": All instances are processes, but processes can be named by the user for reference. Particularly useful if the same instance is run multiple times and they need identifying.
 - "Task": Tasks are unique executions of batches, separated by the start or end of the script or the GO command.
 - "Batch": All tasks are batches, but batches can identify multiple tasks that are the same SQL run at different times.
@@ -33,24 +33,24 @@ Usage:
 DECLARE @start datetime
 SET @start = GETDATE()
 <script>
-EXECUTE [jra].[p_timer] @process = 'Original', @start = @start, @record = 0, @print = 1
+EXECUTE [jadoube].[p_timer] @process = 'Original', @start = @start, @record = 0, @print = 1
 ---
 <script>
-EXECUTE [jra].[p_timer]
+EXECUTE [jadoube].[p_timer]
 <further script>
-EXECUTE [jra].[p_timer]
-GO
+EXECUTE [jadoube].[p_timer]
+<GO>
 <additional further script>
-EXECUTE [jra].[p_timer] @diplay = 1
+EXECUTE [jadoube].[p_timer] @diplay = 1
 ---
 DECLARE @counter AS int = 0
 WHILE @counter < <iterations>
 BEGIN
 	<script>
-	EXECUTE [jra].[p_timer] @process = 'TimeIt', @print = 0
+	EXECUTE [jadoube].[p_timer] @process = 'TimeIt', @print = 0
 	SET @counter += 1
 END
-EXECUTE [jra].[p_timer] @record = 0, @print = 0, @display = 1
+EXECUTE [jadoube].[p_timer] @record = 0, @print = 0, @display = 1
 
 History:
 - 2.1 JRA (2024-01-25): Removed the batch text facility. Can't seem to get it working when called as a procedure.

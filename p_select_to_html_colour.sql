@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE [jra].[p_select_to_html_colour] (
+CREATE OR ALTER PROCEDURE [jadoube].[p_select_to_html_colour] (
     @query varchar(max),
     @order_by varchar(max) = NULL,
 	@out varchar(max) = '' OUTPUT,
@@ -23,14 +23,14 @@ Parameters:
 - @display (bit): If true, displays outputs. Defaults to false.
 
 Prerequisites:
-- [jra].[fn_gradient_hex]: Calculates gradients for numerical columns.
+- [jadoube].[fn_gradient_hex]: Calculates gradients for numerical columns.
 
 Returns:
 - @out (nvarchar(max) OUTPUT): Output HTML.
 
 Usage:
 DECLARE @output nvarchar(max) = ''
-EXECUTE [jra].[p_select_to_html] @query = 'SELECT * FROM [table]', @order_by = '[column1] ASC, [column2] DESC', @out = @output OUTPUT
+EXECUTE [jadoube].[p_select_to_html] @query = 'SELECT * FROM [table]', @order_by = '[column1] ASC, [column2] DESC', @out = @output OUTPUT
 */
 AS
 IF @print = 0
@@ -47,14 +47,14 @@ BEGIN
         @null char(7) = '#8c8c1b',
         @positive char(7) = '#1b8c1b'
 
-    DROP TABLE IF EXISTS [jra].[temp];
-    CREATE TABLE [jra].[temp]([R] int) -- Beat the intellisense.
+    DROP TABLE IF EXISTS [jadoube].[temp];
+    CREATE TABLE [jadoube].[temp]([R] int) -- Beat the intellisense.
 
     DECLARE @cmd nvarchar(max) = CONCAT('
-        DROP TABLE IF EXISTS [jra].[temp];
+        DROP TABLE IF EXISTS [jadoube].[temp];
         
         SELECT * 
-        INTO [jra].[temp] 
+        INTO [jadoube].[temp] 
         FROM (', @query, ') AS [T]
     ')
     IF @print = 1
@@ -73,23 +73,23 @@ BEGIN
 		CONVERT(float, 0.0) AS [sum]
     INTO #columns
     FROM [sys].[columns] AS [c]
-    WHERE [c].[object_id] = OBJECT_ID('[jra].[temp]')
+    WHERE [c].[object_id] = OBJECT_ID('[jadoube].[temp]')
     ORDER BY [c].[column_id]
 
-    ALTER TABLE [jra].[temp]
+    ALTER TABLE [jadoube].[temp]
     ADD [ID] int IDENTITY(0, 1) NOT NULL, [R] int;
 
     SET @cmd = CONCAT('
-        UPDATE [jra].[temp]
+        UPDATE [jadoube].[temp]
         SET [R] = [T].[R]
-        FROM (SELECT (ROW_NUMBER() OVER(ORDER BY ', ISNULL(@order_by, (SELECT TOP(1) '[' + [col] + ']' FROM #columns)), ') - 1) AS [R], [ID] FROM [jra].[temp]) AS [T]
-        WHERE [jra].[temp].[ID] = [T].[ID]
+        FROM (SELECT (ROW_NUMBER() OVER(ORDER BY ', ISNULL(@order_by, (SELECT TOP(1) '[' + [col] + ']' FROM #columns)), ') - 1) AS [R], [ID] FROM [jadoube].[temp]) AS [T]
+        WHERE [jadoube].[temp].[ID] = [T].[ID]
     ')
     IF @print = 1
 	    PRINT(@cmd)
     EXEC(@cmd)
 
-    ALTER TABLE [jra].[temp]
+    ALTER TABLE [jadoube].[temp]
     DROP COLUMN [ID];
 
     DECLARE @c int,
@@ -118,8 +118,8 @@ BEGIN
         BEGIN
             SET @cmd = CONCAT('
                 UPDATE #columns
-                SET [min] = CONVERT(float, (SELECT MIN([', @col, ']) FROM [jra].[temp])),
-                    [max] = CONVERT(float, (SELECT MAX([', @col, ']) FROM [jra].[temp]))
+                SET [min] = CONVERT(float, (SELECT MIN([', @col, ']) FROM [jadoube].[temp])),
+                    [max] = CONVERT(float, (SELECT MAX([', @col, ']) FROM [jadoube].[temp]))
                 WHERE [col] = ''', @col, '''
             ')
             IF @print = 1
@@ -129,7 +129,7 @@ BEGIN
 			BEGIN
 				SET @cmd = CONCAT('
 					UPDATE #columns
-					SET [sum] = CONVERT(float, (SELECT SUM([', @col, ']) FROM [jra].[temp]))
+					SET [sum] = CONVERT(float, (SELECT SUM([', @col, ']) FROM [jadoube].[temp]))
 					WHERE [col] = ''', @col, '''
 				')
                 IF @print = 1
@@ -154,7 +154,7 @@ BEGIN
         FROM #columns
     )
 
-	WHILE @R <= (SELECT MAX([R]) FROM [jra].[temp])
+	WHILE @R <= (SELECT MAX([R]) FROM [jadoube].[temp])
     BEGIN
 	    FETCH FIRST FROM row_cursor
         INTO @c, @col, @numeric, @min, @max
@@ -166,7 +166,7 @@ BEGIN
             SET @cmd = CONCAT('
                 SELECT @value_char = REPLACE(CONVERT(varchar(max), [', @col, '], 21), CHAR(10), ''''),
                     @value_float = ', IIF(@numeric <> 0, CONCAT('CONVERT(float, [', @col, '])'), 'NULL'), '
-                FROM [jra].[temp]
+                FROM [jadoube].[temp]
                 WHERE [R] = ', @R, '
             ')
             IF @print = 1
@@ -185,15 +185,15 @@ BEGIN
                 IF @numeric <> 0 AND @min < 0
                 BEGIN
                     IF @value_float < 0
-                        SET @background = [jra].[fn_gradient_hex](@value_float, @min, 0, @negative, @null)
+                        SET @background = [jadoube].[fn_gradient_hex](@value_float, @min, 0, @negative, @null)
                     ELSE
-                        SET @background = [jra].[fn_gradient_hex](@value_float, @max, 0, @positive, @null)
+                        SET @background = [jadoube].[fn_gradient_hex](@value_float, @max, 0, @positive, @null)
                     SET @fontcolour = @white
                 END
                 ELSE
                 BEGIN
                     IF @numeric <> 0
-                        SET @background = [jra].[fn_gradient_hex](@value_float, @min, @max, @white, @light_accent)
+                        SET @background = [jadoube].[fn_gradient_hex](@value_float, @min, @max, @white, @light_accent)
                     ELSE IF @R % 2 = 0
                         SET @background = @white
                     ELSE
@@ -263,7 +263,7 @@ BEGIN
     CLOSE row_cursor
     DEALLOCATE row_cursor
 
-    DROP TABLE IF EXISTS [jra].[temp]
+    DROP TABLE IF EXISTS [jadoube].[temp]
     DROP TABLE IF EXISTS #columns
 
 	SET @out = @html

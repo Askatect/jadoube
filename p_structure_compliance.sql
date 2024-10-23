@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE [dbo].[p_structure_compliance] (
+CREATE OR ALTER PROCEDURE [jadoube].[p_structure_compliance] (
 	@job_id char(36) = '00000000-0000-0000-0000-000000000000',
 	@job_name varchar(256) = 'source_999_aspect',
 	@truncation_check bit = 1,
@@ -8,7 +8,7 @@ CREATE OR ALTER PROCEDURE [dbo].[p_structure_compliance] (
 	@print bit = 0
 )
 /*
-[dbo].[p_structure_compliance]
+[jadoube].[p_structure_compliance]
 
 Version: 1.0
 Authors: JRA
@@ -27,7 +27,7 @@ Parameters:
 - @print bit: If true, debug statements are printed. Defalts to false.
 
 Usage:
->>> EXECUTE [dbo].[p_structure_compliance] @job_name = 'FastStats_001_DataMart', @schema = NULL, @table = '##mastercontact', @print = 1
+>>> EXECUTE [jadoube].[p_structure_compliance] @job_name = 'FastStats_001_DataMart', @schema = NULL, @table = '##mastercontact', @print = 1
 
 Tasklist:
 - Use sys.indexes to get information about primary keys/uniqueness constraints for when @object_structure is specified.

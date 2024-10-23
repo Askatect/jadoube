@@ -1,10 +1,10 @@
-CREATE OR ALTER FUNCTION [jra].[tf_string_split] (
+CREATE OR ALTER FUNCTION [jadoube].[tf_string_split] (
     @string nvarchar(max),
     @separator nvarchar(max) = ','
 )
 RETURNS @array table ([value] nvarchar(max), [ordinal] int)
 /*
-[jra].[tf_string_split]
+[jadoube].[tf_string_split]
 
 Version: 2.1
 Authors: JRA
@@ -21,7 +21,7 @@ Returns:
 - @array (table): Tabulated data from input string.
 
 Usage:
->>> SELECT * FROM [jra].[tf_string_split]('Link,Zelda,Ganondorf', DEFAULT)
+>>> SELECT * FROM [jadoube].[tf_string_split]('Link,Zelda,Ganondorf', DEFAULT)
 #===========#=========#
 | value     | ordinal |
 #===========#=========#

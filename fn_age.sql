@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[fn_age](
+CREATE OR ALTER FUNCTION [jadoube].[fn_age](
 	@Start date, 
 	@End date = NULL
 )
@@ -19,7 +19,7 @@ Returns:
 - (int)
 
 Usage:
-[jra].[fn_age]('1999-10-03 05:45', '2024-01-06')
+[jadoube].[fn_age]('1999-10-03 05:45', '2024-01-06')
 >>> 24
 */
 BEGIN

@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[fn_extract_pattern] (
+CREATE OR ALTER FUNCTION [jadoube].[fn_extract_pattern] (
     @string nvarchar(max),
     @pattern nvarchar(max) = '[ABCDEFGHIJKLMNOPQRSTUVWXYZ,0-9]',
     @pattern_length int = 1
@@ -21,7 +21,7 @@ Returns:
 - (nvarchar(max)): The reduced string.
 
 Usage:
-[jra].[fn_extract_pattern]('Execute Order 66', DEFAULT, DEFAULT)
+[jadoube].[fn_extract_pattern]('Execute Order 66', DEFAULT, DEFAULT)
 >>> 'EO66'
 
 History:

@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[fn_gradient_hex] (
+CREATE OR ALTER FUNCTION [jadoube].[fn_gradient_hex] (
 	@target float, 
 	@lower float, 
 	@upper float,
@@ -22,13 +22,13 @@ Parameters:
 - @hexmax (char(7)) The hexcode of the highest colour on the gradient.
 
 Prerequisites:
-- [jra].[fn_hexcode_to_rgb]: Converts input to RGB values for calculations.
+- [jadoube].[fn_hexcode_to_rgb]: Converts input to RGB values for calculations.
 
 Returns:
 - @hexcode (char(7)): The target colour.
 
 Usage:
-[jra].[gradient_hex](1, 0, 2, '#000000', '#FFFFFF')
+[jadoube].[gradient_hex](1, 0, 2, '#000000', '#FFFFFF')
 >>> '#888888'
 */
 AS
@@ -47,8 +47,8 @@ BEGIN
 				SELECT [lower].[rgb],
 					[lower].[value] AS [lower],
 					[upper].[value] AS [upper]
-				FROM [jra].[hexcode_to_rgb](@hexmin) AS [lower]
-					INNER JOIN [jra].[hexcode_to_rgb](@hexmax) AS [upper]
+				FROM [jadoube].[hexcode_to_rgb](@hexmin) AS [lower]
+					INNER JOIN [jadoube].[hexcode_to_rgb](@hexmax) AS [upper]
 						ON [lower].[rgb] = [upper].[rgb]
 			) AS [T]
 		) AS [T]

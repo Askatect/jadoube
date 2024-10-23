@@ -1,8 +1,8 @@
-CREATE OR ALTER FUNCTION [jra].[fn_start_case](@string nvarchar(max))
+CREATE OR ALTER FUNCTION [jadoube].[fn_start_case](@string nvarchar(max))
 RETURNS nvarchar(max)
 AS
 /*
-[jra].[fn_start_case]
+[jadoube].[fn_start_case]
 
 Version: 2.1
 Author: JRA
@@ -18,7 +18,7 @@ Returns:
 - (nvarchar(max)): The given string in start case.
 
 Usage:
-[jra].[fn_start_case]('semi-EULERIAN gRaPh')
+[jadoube].[fn_start_case]('semi-EULERIAN gRaPh')
 >>> 'Semi-Eulerian Graph'
 
 History:

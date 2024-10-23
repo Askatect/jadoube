@@ -1,4 +1,4 @@
-CREATE OR ALTER FUNCTION [jra].[fn_replace](
+CREATE OR ALTER FUNCTION [jadoube].[fn_replace](
     @old_substring nvarchar(max), 
     @new_substring nvarchar(max), 
     @strict bit = 1,
@@ -6,7 +6,7 @@ CREATE OR ALTER FUNCTION [jra].[fn_replace](
 )
 RETURNS nvarchar(max)
 /*
-[jra].[fn_replace]
+[jadoube].[fn_replace]
 
 Version: 2.0
 Author: JRA
@@ -25,13 +25,13 @@ Returns:
 - (nvarchar(max)): The input with string with all appropriate replacements.
 
 Usage:
->>> [jra].[fn_replace]('Old', 'New', 0, 'Replace Old Text')
+>>> [jadoube].[fn_replace]('Old', 'New', 0, 'Replace Old Text')
 'Replace New Text'
->>> [jra].[fn_replace]('New', 'Newer', 1, 'Replace New Text')
+>>> [jadoube].[fn_replace]('New', 'Newer', 1, 'Replace New Text')
 'Replace New Text'
->>> [jra].[fn_replace]('  ', ' ', 0, 'Three   spaces.')
+>>> [jadoube].[fn_replace]('  ', ' ', 0, 'Three   spaces.')
 'Three spaces.'
->>> [jra].[fn_replace]('[^0-9]', '', 0, 'Source_20240101.csv')
+>>> [jadoube].[fn_replace]('[^0-9]', '', 0, 'Source_20240101.csv')
 '20240101'
 
 History:

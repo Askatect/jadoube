@@ -1,5 +1,5 @@
-CREATE OR ALTER PROCEDURE [jra].[p_transpose_table] (@query varchar(max),
-	@output varchar(max) = '[jra].[output]'
+CREATE OR ALTER PROCEDURE [jadoube].[p_transpose_table] (@query varchar(max),
+	@output varchar(max) = '[jadoube].[output]'
 )
 /*
 Version: 1.0
@@ -14,7 +14,7 @@ Parameters:
 - @output (varchar(max)): Name of output table.
 
 Usage:
-EXECUTE [jra].[p_transpose_table] @query = 'SELECT * FROM (VALUES (''Sapphira'', ''Blue''), (''Thorn'', ''Red''), (''Glaedr'', ''Gold''), (''Firnen'', ''Green''), (''Shruikan'', ''Black'')) AS [T]([Dragon] nvarchar(max), [Colour] nvarchar(max))', @output = '##Transposed'
+EXECUTE [jadoube].[p_transpose_table] @query = 'SELECT * FROM (VALUES (''Sapphira'', ''Blue''), (''Thorn'', ''Red''), (''Glaedr'', ''Gold''), (''Firnen'', ''Green''), (''Shruikan'', ''Black'')) AS [T]([Dragon] nvarchar(max), [Colour] nvarchar(max))', @output = '##Transposed'
 SELECT * FROM ##Transposed
 >>> #========#==========#=======#========#========#==========#
 	| Dragon | Sapphira | Thorn | Glaedr | Firnen | Shruikan |
@@ -26,14 +26,14 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	DROP TABLE IF EXISTS [jra].[temp]
+	DROP TABLE IF EXISTS [jadoube].[temp]
 	DROP TABLE IF EXISTS #columns
 	DROP TABLE IF EXISTS ##insert
 
 	DECLARE @cmd varchar(max)
 	SET @cmd = CONCAT('
 		SELECT *
-		INTO [jra].[temp]
+		INTO [jadoube].[temp]
 		FROM (', @query, ') AS [T]
 	')
 	--PRINT(@cmd)
@@ -44,7 +44,7 @@ BEGIN
 	SELECT [column_id] AS [c],
 		[name] AS [col]
 	FROM sys.columns
-	WHERE [object_id] = OBJECT_ID('[jra].[temp]')
+	WHERE [object_id] = OBJECT_ID('[jadoube].[temp]')
 	ORDER BY [column_id]
 
 	OPEN cols_cursor
@@ -55,7 +55,7 @@ BEGIN
 	SET @cmd = CONCAT('
 		SELECT ', @c, ' AS [c], CONCAT(''(['', STRING_AGG(ISNULL(CONVERT(varchar, [', @col, '], 21), ''NULL''), ''] varchar(max), [''), ''] varchar(max))'') AS [values]
 		INTO ##insert
-		FROM [jra].[temp]
+		FROM [jadoube].[temp]
 	')
 
 	WHILE @@FETCH_STATUS = 0
@@ -66,7 +66,7 @@ BEGIN
 		SET @cmd += CONCAT('
 			UNION
 			SELECT ', @c, ', CONCAT(''('''''', STRING_AGG(ISNULL(CONVERT(varchar, [', @col, '], 21), ''NULL''), '''''', ''''''), '''''')'')
-			FROM [jra].[temp]
+			FROM [jadoube].[temp]
 		')
 	END
 	--PRINT(@cmd)
@@ -90,7 +90,7 @@ BEGIN
 	CLOSE cols_cursor
 	DEALLOCATE cols_cursor
 
-	DROP TABLE IF EXISTS [jra].[temp]
+	DROP TABLE IF EXISTS [jadoube].[temp]
 	DROP TABLE IF EXISTS #columns
 	DROP TABLE IF EXISTS ##insert
 END

@@ -1,4 +1,4 @@
-CREATE OR ALTER PROCEDURE [jra].[p_string_table_split] (
+CREATE OR ALTER PROCEDURE [jadoube].[p_string_table_split] (
     @string nvarchar(max),
     @separator nvarchar(max) = ',',
     @row_separator nvarchar(max) = ';',
@@ -26,7 +26,7 @@ Returns:
 - ##output (table): Tabulated data from given string.
 
 Usage:
-EXECUTE [jra].[p_string_table_split]('Boss,Location;Massive Moss Charger,Greenpath', DEFAULT, DEFAULT, DEFAULT, 0, 1)
+EXECUTE [jadoube].[p_string_table_split]('Boss,Location;Massive Moss Charger,Greenpath', DEFAULT, DEFAULT, DEFAULT, 0, 1)
 >>> #======================#===========#
     | Boss                 | Location  |
     #======================#===========#

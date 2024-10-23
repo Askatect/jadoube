@@ -1,9 +1,9 @@
-CREATE OR ALTER FUNCTION [utl].[fn_title_case] (
+CREATE OR ALTER FUNCTION [jadoube].[fn_title_case] (
     @string nvarchar(4000)
 )
 RETURNS nvarchar(4000)
 /*
-[utl].[fn_title_case]
+[jadoube].[fn_title_case]
 
 Version: 1.0
 Authors: JRA

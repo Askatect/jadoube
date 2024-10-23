@@ -1,10 +1,10 @@
-CREATE OR ALTER PROCEDURE [jra].[p_select_to_html] (
+CREATE OR ALTER PROCEDURE [jadoube].[p_select_to_html] (
     @schema varchar(128) = NULL,
     @table varchar(128),
     @print bit = 1
 )
 /*
-[jra].[p_select_to_html]
+[jadoube].[p_select_to_html]
 
 Version: 1.0
 Authors: JRA
@@ -23,7 +23,7 @@ Returns:
 
 Usage:
 >>> SELECT 'value' AS [column] INTO #table
->>> EXECUTE [jra].[p_select_to_html] @table = '#table', @print = 0
+>>> EXECUTE [jadoube].[p_select_to_html] @table = '#table', @print = 0
 """
 +=========================================================================================================+
 |                                                 html                                                    |
