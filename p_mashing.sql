@@ -14,12 +14,12 @@ AS
 /*
 [jadoube].[p_mashing]
 
-Version: 1.0
+Version: 1.2
 Authors: JRA
-Date: 2024-10-16
+Date: 2024-11-06
 
 Explanation:
-Given one or two tables - with the same structure - that features a master key and duplicate keys, mashing unifies them into a single table, where no master appears as a duplicate and no duplicate appears as a master. Additional columns can be specified to be carried about with the changed. The output is stored in a table with the same schema and name as the target, with the table name suffixed with "_mashing".
+Given a table that features a master key and duplicate keys, mashing modifies the table such that no master appears as a duplicate and no duplicate appears as a master. Additional columns can be specified to be carried about with the changed. The output is stored in a table with the same schema and name as the target, with the table name suffixed with "_mashing". Furthermore, if a source table is provided, then the source is mashed into the target and (for performance), the target is not itself mashed. Note that the source must have the same structure as the target.
 
 Requirements:
 - [jadoube].[fn_string_split_item]
@@ -32,7 +32,7 @@ Parameters:
 - @master_key (varchar(128)): The name of the column containing the master keys.
 - @duplicate_key (varchar(128)): The name of the columns containing the duplicate keys.
 - @update_columns (varchar(4000)): A comma-separated list of columns associated with the duplicate that should stay with their own duplicate key. Defaults to no additional columns.
-- @priority (nvarchar(4000)): A SQL ordering expression to prioritise records. Higher priority records remain as left keys and lower priority records become right keys. Use `[__source] ASC` to prioritise master keys from the target and `[__source] DESC` to prioritise keys from the source. Defaults to no prioritisation.
+- @priority (nvarchar(4000)): A SQL ordering expression to prioritise records. Higher priority records remain as left keys and lower priority records become right keys. Defaults to no prioritisation.
 - @print (bit): If true, debug statements and tables are displayed. Defaults to false.
 - @execute (bit): If true, dynamic SQL statements are executed. Defaults to true.
 
@@ -51,6 +51,8 @@ Usage:
 >>> SELECT * FROM [misc].[goodreads_matching_mashing]
 
 History:
+- 1.2 JRA (2024-11-06): Added an index on the table to be mashed in an attempt to improve performance. The target will be mashed only if the source not provided.
+- 1.1 JRA (2024-10-24): Removed [__source]. Changed the behaviour if `@source` is provided. Fixed an issue if no update columns are provided.
 - 1.0 JRA (2024-10-16): Initial version.
 */
 DECLARE @target varchar(261),
@@ -65,17 +67,20 @@ IF @source = ''
 IF @priority IS NULL
 	SET @priority = '(SELECT 1)';
 
-DECLARE @columns table ([index] int, [column] varchar(128));
-WITH [T] AS (
-	SELECT 0 AS [index], [jadoube].[fn_string_split_item](@update_columns, ',', 0) AS [column]
-	UNION ALL
-	SELECT [index] + 1, [jadoube].[fn_string_split_item](@update_columns, ',', [index] + 1)
+IF @update_columns IS NOT NULL
+BEGIN
+	DECLARE @columns table ([index] int, [column] varchar(128));
+	WITH [T] AS (
+		SELECT 0 AS [index], [jadoube].[fn_string_split_item](@update_columns, ',', 0) AS [column]
+		UNION ALL
+		SELECT [index] + 1, [jadoube].[fn_string_split_item](@update_columns, ',', [index] + 1)
+		FROM [T]
+		WHERE [jadoube].[fn_string_split_item](@update_columns, ',', [index] + 1) <> ''
+	)
+	INSERT INTO @columns
+	SELECT [index], [column]
 	FROM [T]
-	WHERE [jadoube].[fn_string_split_item](@update_columns, ',', [index] + 1) <> ''
-)
-INSERT INTO @columns
-SELECT [index], [column]
-FROM [T]
+END
 
 SET @cmd = CONCAT('
 DROP TABLE IF EXISTS [##mashing];
@@ -87,18 +92,24 @@ WITH [T] AS (
 SELECT ROW_NUMBER() OVER(ORDER BY ', @priority, ') AS [__priority], *
 INTO [##mashing]
 FROM [T]
-
-ALTER TABLE [##mashing]
-DROP COLUMN [__source]
 ')
 IF @print = 1 PRINT(@cmd)
 IF @execute = 1 EXEC(@cmd);
 
-SET @cmd = (
-	SELECT CONCAT(',', CHAR(10), CHAR(9), CHAR(9), '[right].', QUOTENAME([column], '['), ' = [left].', QUOTENAME([column], '['))
-	FROM @columns
-	FOR XML PATH(''), TYPE
-).value('./text()[1]', 'nvarchar(max)')
+SET @cmd = CONCAT('CREATE CLUSTERED INDEX I_##_mashing ON [##mashing]([__source], [__priority], ', QUOTENAME(@master_key, '['), ')')
+IF @print = 1 PRINT(@cmd);
+IF @execute = 1 EXEC(@cmd);
+
+IF @update_columns IS NOT NULL
+BEGIN
+	SET @cmd = (
+		SELECT CONCAT(',', CHAR(10), CHAR(9), CHAR(9), '[right].', QUOTENAME([column], '['), ' = [left].', QUOTENAME([column], '['))
+		FROM @columns
+		FOR XML PATH(''), TYPE
+	).value('./text()[1]', 'nvarchar(max)')
+END
+ELSE
+	SET @cmd = NULL
 SET @cmd = CONCAT('
 DECLARE @row_count int = 1
 WHILE @row_count > 0
@@ -107,7 +118,8 @@ BEGIN
 	SET [right].', QUOTENAME(@master_key, '['), ' = [left].', QUOTENAME(@master_key, '['), @cmd, '
 	FROM [##mashing] AS [left]
 		INNER JOIN [##mashing] AS [right]
-			ON [left].[__priority] < [right].[__priority]
+			ON ', IIF(@source IS NULL, '', '[left].[__source] = 1
+			AND '), '[left].[__priority] < [right].[__priority]
 			AND [left].', QUOTENAME(@master_key, '['), ' <> [right].', QUOTENAME(@master_key, '['), '
 			AND [left].', QUOTENAME(@duplicate_key, '['), ' IN ([right].', QUOTENAME(@master_key, '['), ', [right].', QUOTENAME(@duplicate_key, '['), ')
 	
@@ -130,7 +142,7 @@ FROM [T]
 WHERE [R] = 1
 
 ALTER TABLE ', @target, '
-DROP COLUMN [__priority], [R]
+DROP COLUMN [__source], [__priority], [R]
 
 DROP TABLE IF EXISTS [##mashing];
 ')
